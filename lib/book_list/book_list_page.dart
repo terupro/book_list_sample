@@ -1,3 +1,4 @@
+import 'package:book_list_sample/add_book/add_book_page.dart';
 import 'package:book_list_sample/book_list/book_list_model.dart';
 import 'package:book_list_sample/domain/book.dart';
 import 'package:flutter/material.dart';
@@ -33,10 +34,30 @@ class BookListPage extends StatelessWidget {
             );
           }),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {},
-          child: const Icon(Icons.add),
-        ),
+        floatingActionButton:
+            Consumer<BookListModel>(builder: (context, model, child) {
+          return FloatingActionButton(
+            onPressed: () async {
+              final bool? added = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  fullscreenDialog: true,
+                  builder: (context) => AddBookPage(),
+                ),
+              );
+              if (added != null && added) {
+                final snackBar = SnackBar(
+                  backgroundColor: Colors.green,
+                  content: Text('本が追加されました'),
+                );
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              }
+              // 戻ってきたら再読み込み
+              model.fetchBookList();
+            },
+            child: const Icon(Icons.add),
+          );
+        }),
       ),
     );
   }
