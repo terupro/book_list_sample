@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 class EditBookModel extends ChangeNotifier {
   final Book book;
   EditBookModel(this.book) {
-    titleController.text = book.title!;
-    authorController.text = book.author!;
+    titleController.text = book.title;
+    authorController.text = book.author;
   }
 
   final titleController = TextEditingController();
