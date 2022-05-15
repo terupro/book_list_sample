@@ -12,13 +12,19 @@ class BookListModel extends ChangeNotifier {
 
     // Firebase上のドキュメントの値(フィールド)をBookに変換する
     final List<Book> books = snapshot.docs.map((DocumentSnapshot document) {
+      // data = field
       Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+      final String id = document.id;
       final String title = data['title'];
       final String author = data['author'];
-      return Book(title, author);
+      return Book(id, title, author);
     }).toList();
 
     this.books = books;
     notifyListeners();
+  }
+
+  Future delete(Book book) async {
+    await FirebaseFirestore.instance.collection('books').doc(book.id).delete();
   }
 }

@@ -1,6 +1,8 @@
 import 'package:book_list_sample/add_book/add_book_page.dart';
 import 'package:book_list_sample/book_list/book_list_model.dart';
 import 'package:book_list_sample/domain/book.dart';
+import 'package:book_list_sample/edit_book/edit_book_page.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -23,9 +25,53 @@ class BookListPage extends StatelessWidget {
 
             final List<Widget> widgets = books
                 .map(
-                  (book) => ListTile(
-                    title: Text(book.title!),
-                    subtitle: Text(book.author!),
+                  (book) => Slidable(
+                    endActionPane: ActionPane(
+                      motion: const ScrollMotion(),
+                      children: [
+                        SlidableAction(
+                          backgroundColor: Colors.grey,
+                          foregroundColor: Colors.white,
+                          icon: Icons.edit,
+                          label: '編集',
+                          onPressed: (_) async {
+                            final String? title = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditBookPage(book),
+                              ),
+                            );
+                            if (title != null) {
+                              final snackBar = SnackBar(
+                                backgroundColor: Colors.green,
+                                content: Text('$titleを編集しました'),
+                              );
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBar);
+                            }
+                            // 戻ってきたら再読み込み
+                            model.fetchBookList();
+                          },
+                        ),
+                        SlidableAction(
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                          icon: Icons.delete,
+                          label: '削除',
+                          onPressed: (_) async {
+                            await showConfirmDialog(
+                              context,
+                              book,
+                              model,
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                    child: ListTile(
+                      title: Text(book.title!),
+                      subtitle: Text(book.author!),
+                    ),
                   ),
                 )
                 .toList();
@@ -46,7 +92,7 @@ class BookListPage extends StatelessWidget {
                 ),
               );
               if (added != null && added) {
-                final snackBar = SnackBar(
+                const snackBar = SnackBar(
                   backgroundColor: Colors.green,
                   content: Text('本が追加されました'),
                 );
@@ -61,4 +107,37 @@ class BookListPage extends StatelessWidget {
       ),
     );
   }
+}
+
+Future showConfirmDialog(BuildContext context, Book book, BookListModel model) {
+  return showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (_) {
+      return AlertDialog(
+        title: const Text("削除の確認"),
+        content: Text("『${book.title}』を削除しますか？"),
+        actions: [
+          TextButton(
+            child: const Text("いいえ"),
+            onPressed: () => Navigator.pop(context),
+          ),
+          TextButton(
+            child: const Text("はい"),
+            onPressed: () {
+              // 削除処理
+              model.delete(book);
+              Navigator.pop(context);
+              final snackBar = SnackBar(
+                backgroundColor: Colors.red,
+                content: Text('『${book.title}』を削除しました'),
+              );
+              model.fetchBookList();
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            },
+          ),
+        ],
+      );
+    },
+  );
 }

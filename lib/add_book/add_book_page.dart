@@ -25,7 +25,6 @@ class AddBookPage extends StatelessWidget {
                     },
                     decoration: const InputDecoration(
                       hintText: '本のタイトル',
-                      border: OutlineInputBorder(),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -35,7 +34,6 @@ class AddBookPage extends StatelessWidget {
                     },
                     decoration: const InputDecoration(
                       hintText: '本の著者',
-                      border: OutlineInputBorder(),
                     ),
                   ),
                   const SizedBox(height: 20),
