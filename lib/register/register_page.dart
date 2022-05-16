@@ -33,6 +33,7 @@ class RegisterPage extends StatelessWidget {
                       ),
                       TextField(
                         controller: model.passwordController,
+                        obscureText: true,
                         decoration: const InputDecoration(
                           hintText: 'パスワード',
                         ),

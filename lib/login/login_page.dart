@@ -1,5 +1,4 @@
 import 'package:book_list_sample/login/login_model.dart';
-import 'package:book_list_sample/register/register_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -34,6 +33,7 @@ class LoginPage extends StatelessWidget {
                       ),
                       TextField(
                         controller: model.passwordController,
+                        obscureText: true,
                         decoration: const InputDecoration(
                           hintText: 'パスワード',
                         ),
